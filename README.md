@@ -5,8 +5,7 @@
 ###### December 2018
 
 # Currently stuck in rosrun sensor_stick train_svm.py
-![Please help](./images/ROSRUNError.png)
-
+![Please help](./images/ROSRUNError.PNG)
 
 ### Objective
 
