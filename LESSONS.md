@@ -452,3 +452,5 @@ $ cd ~/catkin_ws
 $ rosrun sensor_stick capture_features.py
 ```
 The features will now be captured and you can watch the objects being spawned in Gazebo. It should take 5-10 seconds for each random orientation (depending on your machine's resources). There are 7 objects total so it takes awhile to complete. When it finishes running you should have a training_set.sav file containing the features and labels for the dataset. Note: The training_set.sav file will be saved in your catkin_ws folder.
+
+#### Train Your SVM (Lesson 22.15)
