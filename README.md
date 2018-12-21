@@ -6,7 +6,7 @@
 
 # Currently stuck in rosrun sensor_stick train_svm.py
 ![Please help](./images/ROSRUNError.PNG)
-
+...
 ### Objective
 
 ###### To program a PR2 in identifying and acquiring target objects from a cluttered space and place them in a bin. The project is based on the 'Stow Task' portion of Amazon's Robotics Challenge.
