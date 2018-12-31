@@ -55,25 +55,23 @@ def pcl_callback(pcl_msg):
     ### Convert ROS msg to PCL data
     cloud = ros_to_pcl(pcl_msg)
 
-
     ### Voxel Grid Downsampling
     # Create a VoxelGrid filter object for our input point cloud
     vox = cloud.make_voxel_grid_filter()
 
     # Choose a voxel (also known as leaf) size
-    # Note: this (1) is a poor choice of leaf size   
+    # Note: this (1) is a poor choice of leaf size
     # Experiment and find the appropriate size!
     LEAF_SIZE = 0.003
 
-
-    # Set the voxel (or leaf) size  
+    # Set the voxel (or leaf) size
     vox.set_leaf_size(LEAF_SIZE, LEAF_SIZE, LEAF_SIZE)
 
     # Call the filter function to obtain the resultant downsampled point cloud
     cloud_filtered = vox.filter()
 
     ### Statistical Outlier Removal Filter
-    # Much like the previous filters, we start by creating a filter object: 
+    # Much like the previous filters, we start by creating a filter object:
     outlier_filter = cloud_filtered.make_statistical_outlier_filter()
 
     # Set the number of neighboring points to analyze for any given point
@@ -100,7 +98,7 @@ def pcl_callback(pcl_msg):
     axis_max = 1.1
     passThroughZ.set_filter_limits(axis_min, axis_max)
 
-    # Finally use the filter function to obtain the resultant point cloud. 
+    # Finally use the filter function to obtain the resultant point cloud.
     cloud_filtered = passThroughZ.filter()
 
     ## Now, Create a PassThrough filter object across the Y axis
@@ -112,27 +110,25 @@ def pcl_callback(pcl_msg):
     axis_max = 0.5
     passThroughY.set_filter_limits(axis_min, axis_max)
 
-    # Finally use the filter function to obtain the resultant point cloud. 
+    # Finally use the filter function to obtain the resultant point cloud.
     cloud_filtered = passThroughY.filter()
-
 
     ### RANSAC Plane Segmentation
     # Create the segmentation object
     seg = cloud_filtered.make_segmenter()
 
-    # Set the model you wish to fit 
+    # Set the model you wish to fit
     seg.set_model_type(pcl.SACMODEL_PLANE)
     seg.set_method_type(pcl.SAC_RANSAC)
 
     # Max distance for a point to be considered fitting the model
-    # Experiment with different values for max_distance 
+    # Experiment with different values for max_distance
     # for segmenting the table
     max_distance = 0.01
     seg.set_distance_threshold(max_distance)
 
     # Call the segment function to obtain set of inlier indices and model coefficients
     inliers, coefficients = seg.segment()
-
 
     ### Extract inliers and outliers
     extracted_inliers = cloud_filtered.extract(inliers, negative=False)
@@ -146,7 +142,7 @@ def pcl_callback(pcl_msg):
 
     ### Create a cluster extraction object
     ec = white_cloud.make_EuclideanClusterExtraction()
-    # Set tolerances for distance threshold 
+    # Set tolerances for distance threshold
     # as well as minimum and maximum cluster size (in points)
     # Your task is to experiment and find values that work for segmenting objects.
     ec.set_ClusterTolerance(0.01)
@@ -157,7 +153,6 @@ def pcl_callback(pcl_msg):
     ec.set_SearchMethod(tree)
     # Extract indices for each of the discovered clusters
     cluster_indices = ec.Extract()
-
 
     ### Create Cluster-Mask Point Cloud to visualize each cluster separately
 
@@ -177,20 +172,17 @@ def pcl_callback(pcl_msg):
     cluster_cloud = pcl.PointCloud_PointXYZRGB()
     cluster_cloud.from_list(color_cluster_point_list)
 
-
     # TODO - set proper names    ### Convert PCL data to ROS messages
-    ros_cloud_objects = pcl_to_ros(extracted_outliers) 
+    ros_cloud_objects = pcl_to_ros(extracted_outliers)
     ros_cloud_table = pcl_to_ros(extracted_inliers)
     ros_cluster_cloud = pcl_to_ros(cluster_cloud)
-
 
     # TODO   set names ### Publish ROS messages
     pcl_objects_pub.publish(ros_cloud_objects)
     pcl_table_pub.publish(ros_cloud_table)
     pcl_cluster_pub.publish(ros_cluster_cloud)
 
-
-    # Exercise-3 TODOs: 
+    # Exercise-3 TODOs:
 
     # Classify the clusters! (loop through each detected cluster one at a time)
     detected_objects_labels = []
@@ -239,7 +231,7 @@ def pcl_callback(pcl_msg):
     for i in range(len(object_list_param)):
         pick_list_objects.append(object_list_param[i]['name'])
 
-    print "\n"  
+    print "\n"
     print "Pick List includes: "
     print pick_list_objects
     print "\n"
@@ -253,11 +245,9 @@ def pcl_callback(pcl_msg):
         except rospy.ROSInterruptException:
             pass
 
-
     # Suggested location for where to invoke your pr2_mover() function within pcl_callback()
     # Could add some logic to determine whether or not your object detections are robust
     # before calling pr2_mover()
-
 
 
 # function to load parameters and request PickPlace service
@@ -292,17 +282,17 @@ def pr2_mover(object_list):
     # Compare the label with the pick list and provide the centroid
 
 
-    # The way it will actually work within your code is that you'll iterate over each item in the pick list, 
-    # see whether you found it in your perception analysis, then if you did, populate the pick_pose message with the centroid. 
-    # Since you'll do this with each object one at a time, a convenient way to save the messages 
-    # for each object is in a list of dictionaries. 
+    # The way it will actually work within your code is that you'll iterate over each item in the pick list,
+    # see whether you found it in your perception analysis, then if you did, populate the pick_pose message with the centroid.
+    # Since you'll do this with each object one at a time, a convenient way to save the messages
+    # for each object is in a list of dictionaries.
 
 
-    # With each iteration over the pick list, you can create a dictionary with the above 
+    # With each iteration over the pick list, you can create a dictionary with the above
     # function and then generate a list of dictionaries containing all your ROS service request messages.ie.e
     dict_list = []
     for i in range(0, len(object_list_param)):
-        
+
 
         labels = []
         centroids = [] # to be list of tuples (x, y, z)
@@ -331,7 +321,7 @@ def pr2_mover(object_list):
             arm_name.data = 'right'
             place_pose.position.x = box_position[1][0]
             place_pose.position.y = box_position[1][1]
-            place_pose.position.z = box_position[1][2]   
+            place_pose.position.z = box_position[1][2]
 
 
         # pick_pose
@@ -391,7 +381,7 @@ if __name__ == '__main__':
     # Other publishers for the markers and labels
     object_markers_pub = rospy.Publisher("/object_markers", Marker, queue_size=1)
     detected_objects_pub = rospy.Publisher("/detected_objects", DetectedObjectsArray, queue_size=1)
-    
+
     # Load Model From disk
     model = pickle.load(open('model_worlds123_V2.sav', 'rb'))
     clf = model['classifier']
