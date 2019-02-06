@@ -562,12 +562,7 @@ $ rosrun sensor_stick capture_features.py
 
 # Primary
 
-This is primarily the same code I came up with but got help from other folk in github.
-()[./primary_code/project_template.py]
 
-I couldn't get an output as required by the project, since its a configuration nightmare and in my opinion it is unfair for Udacity to roll out a half baked configuration to their students.  I am submitting an output from other folks -- other folks got it to work a year ago.  I believe some of the libraries have changed.
-
-Could you tell I'm a bit disappointed or frustrated with Udacity.
 
 Thanks.
 # Output
