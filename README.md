@@ -560,6 +560,11 @@ $ rosrun sensor_stick capture_features.py
 
 #### Train Your SVM (Lesson 22.15)
 
+I was able to get a 90% accuracy for the confusion matrix using capture attempts = 75 and histogram bins = 10
+
+![](./images/confusionmatrix.JPG)
+
+
 # Primary
 
 
