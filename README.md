@@ -545,27 +545,49 @@ $ export GAZEBO_MODEL_PATH=~/catkin_ws/src/sensor_stick/models
 $ source ~/catkin_ws/devel/setup.bash
 ```
 
-#### Generate Features (Lesson 22.14)
-To get started generating features, launch the training.launch file to bring up the Gazebo environment. An empty environment should appear with only the sensor stick robot in the scene:
+#  Generate Features (Lesson 22.14)
+
+In capturing the point cloud features, I used the sensor_stick model to analyze and record each object of the PR2 project. In order to do this, I copied the models folder from the PR2 project into the models folder of the sensor stick folder (PR2 models folder --> sensor strick models folder). Once the models were stored there, I copied the capture_features.py file to create a new capture_features2.py file and modified the new file for the objects.
+
+With the file prepared, the next step is launching Gazebo environment.
 ```
-$ cd ~/catkin_ws
-$ roslaunch sensor_stick training.launch
+roslaunch sensor_stick training.launch
 ```
 
-On another terminal
+Then run the capture_features2.py
 ```
-$ cd ~/catkin_ws
-$ rosrun sensor_stick capture_features.py
+rosrun sensor_stick capture_features2.py
 ```
+This produces the file `training_set_pr2.sav` in the ~\catkin_ws folder.
+
 
 #### Train Your SVM (Lesson 22.15)
 
-I was able to get a 90% accuracy for the confusion matrix using capture attempts = 75 and histogram bins = 10
+Using capture attempts = 120 and histogram bins = 10, I was able to get over 90% accuracy.
 
 ![](./images/confusionmatrix.JPG)
 
+![](./images/confusionmatrix1.JPG)
 
-# Primary
+Run the train_svm.py
+```
+rosrun sensor_stick train.py
+```
+This produces the model.sav file located in the /home/robond/catkin_ws/model.sav.  Copy the model.sav file to ~catkin_ws/src/RoboND/pr2_robot/model.sav
+
+Launch the pick place project.  Its best that you reboot the VM before issuing the command in the terminal
+```
+roslaunch pr2_robot pick_place_project.launch
+```
+
+Launch the object_recognition to produce the yaml files.
+```
+rosrun pr2_robot object_recognition3.py
+```
+
+Repeat and rinse :-) for the world 2 and world 3.
+
+
 
 
 
